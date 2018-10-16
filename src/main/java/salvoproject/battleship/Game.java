@@ -1,9 +1,9 @@
 package salvoproject.battleship;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,36 +12,21 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 @Entity
-public class Player {
+public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new LinkedHashSet<>();
 
-    private String userName;
-
-    public Player(){ }
+    private Date date;
 
 
 
-    public Player(String email){userName = email;}
 
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-
-    public String toString() {
-        return userName;
-    }
+    public Game() {this.date = new Date();}
 
     public Long getId() {
         return id;
@@ -51,6 +36,17 @@ public class Player {
         this.id = id;
     }
 
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public void setDate(Date date) { this.date = date;}
+    public Date getDate() {return this.date; }
+
     public Set<salvoproject.battleship.GamePlayer> getGamePlayer() {
         return gamePlayers;
     }
@@ -58,8 +54,8 @@ public class Player {
     public void setGamePlayer(Set<salvoproject.battleship.GamePlayer> gamePlayer) {
         gamePlayers = gamePlayer;
     }
-    @JsonIgnore
-    public List<Game> getGames () {
-        return gamePlayers.stream().map(gamePlayer -> gamePlayer.getGame()).collect(toList());
+
+    public List<Player> getPlayers (){
+        return gamePlayers.stream().map(gamePlayer -> gamePlayer.getPlayer()).collect(toList());
     }
 }
