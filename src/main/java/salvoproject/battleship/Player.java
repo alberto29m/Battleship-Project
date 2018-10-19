@@ -21,6 +21,9 @@ public class Player {
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<GamePlayer> gamePlayers = new LinkedHashSet<>();
 
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<Score> score = new LinkedHashSet<>();
+
     private String userName;
 
     public Player(){ }
@@ -53,6 +56,22 @@ public class Player {
 
     public Set<salvoproject.battleship.GamePlayer> getGamePlayer() {
         return gamePlayers;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public Set<Score> getScore() {
+        return score;
+    }
+
+    public void setScore(Set<Score> score) {
+        this.score = score;
     }
 
     public void setGamePlayer(Set<salvoproject.battleship.GamePlayer> gamePlayer) {

@@ -18,7 +18,8 @@ fetch(makeUrl())
         console.log(data);
         var ship = data.ships;
         var salvoes = data.salvoes;
-        makeTheTable();
+        makeTheTable("board", "");
+        makeTheTable("board2", "O");
         buildShips(ship);
         buildSalvoes(salvoes);
 
@@ -27,11 +28,12 @@ fetch(makeUrl())
         console.log('Request failed', error);
     });
 
-function makeTheTable(){
+
+function makeTheTable(id, string){
     var id1 = "";
     var id2;
     var arrayLetters = ["A","B","C","D","E","F","G","H","I","J"];
-    var table = document.getElementById("board");
+    var table = document.getElementById(id);
     for(var i = 0; i< 11; i++){
         var row = document.createElement("tr");
         table.appendChild(row);
@@ -49,7 +51,7 @@ function makeTheTable(){
             if(j > 0){
                 id2 =j;
             }
-            column.setAttribute("id", id1 + id2);
+            column.setAttribute("id", string + id1 + id2);
         }
     }
 }
@@ -64,22 +66,38 @@ function buildShips(ship){
     }
 }
 
-function buildSalvoes(salvoes){
-    for(var i = 0; i< salvoes.length; i++){
-        // if(salvoes[i].turn == 1){
-            var locations = salvoes[i].location;
-            for(var j = 0; j< locations.length; j++){
-                var td = document.getElementById(locations[j]);
-                td.textContent = salvoes[i].turn;
-                var boolean = td.className == "ships"
-                // var shipss = document.getElementsByClassName("ships")
-                if(boolean){
-                    td.setAttribute("class", "salvoShip");
-                    console.log("hola");
+    function buildSalvoes(salvoes){
+            for(var i = 0; i< salvoes.length; i++){
+                if(gamePlayerID == salvoes[i].gameplayerID){
+                    for(var j = 0; j< salvoes[i].salvoes.length; j++){
+                        var locations = salvoes[i].salvoes[j].location;
+                        for(var l = 0; l< locations.length; l++){
+                            var td = document.getElementById("O" + locations[l]);
+                            td.textContent = salvoes[i].salvoes[j].turn;
+                            var boolean = td.className == "ships";
+                            if(boolean){
+                            td.setAttribute("class", "salvoShip");
+                            console.log("hola");
+                            }else{
+                            td.setAttribute("class", "salvoWater");
+                            }
+                        }
+                     }
                 }else{
-                    td.setAttribute("class", "salvoWater");
+                    for(var n = 0; n< salvoes[i].salvoes.length; n++){
+                        locations2 = salvoes[i].salvoes[n].location;
+                        for(var m = 0; m< locations2.length; m++){
+                            var td2 = document.getElementById(locations2[m]);
+                            td2.textContent = salvoes[i].salvoes[n].turn;
+                            // var boolean2 = td2.className == "ships";
+                            if(td2.classList.contains("ships")){
+                                td2.className += " salvoShip";
+                                console.log("hola");
+                            }else {
+                                td2.className += " salvoWater";
+                            }
+                        }
+                    }
                 }
             }
-        // }
     }
-}

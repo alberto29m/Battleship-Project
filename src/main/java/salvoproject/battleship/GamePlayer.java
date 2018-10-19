@@ -27,6 +27,10 @@ public class GamePlayer {
     @JoinColumn(name="game_id")
     private Game game;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="score_id")
+    private Score score;
+
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     private Set<Ship> ships = new LinkedHashSet<>();
 
@@ -83,5 +87,13 @@ public class GamePlayer {
 
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
+    }
+
+    public Score getScore() {
+        return score;
+    }
+
+    public void setScore(Score score) {
+        this.score = score;
     }
 }
