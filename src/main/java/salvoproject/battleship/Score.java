@@ -59,4 +59,20 @@ public class Score {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    public Double getScoreNumber() {
+        return scoreNumber;
+    }
+
+    public void setScoreNumber(Double scoreNumber) {
+        this.scoreNumber = scoreNumber;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 }

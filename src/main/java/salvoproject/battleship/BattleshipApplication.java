@@ -225,6 +225,7 @@ public class BattleshipApplication {
 			List<String> salvoLocation19 = Arrays.asList("C6", "D6", "E6");
 			List<String> salvoLocation20 = Arrays.asList("H1", "H8");
 
+
 			Salvo salvo0 = new Salvo(1, salvoLocation0, gp1);
 			salvoRepository.save(salvo0);
 			Salvo salvo1 = new Salvo(1, salvoLocation1, gp2);

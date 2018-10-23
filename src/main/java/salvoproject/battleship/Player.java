@@ -66,7 +66,7 @@ public class Player {
         this.gamePlayers = gamePlayers;
     }
 
-    public Set<Score> getScore() {
+    public Set<Score> getScores() {
         return score;
     }
 

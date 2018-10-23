@@ -25,9 +25,22 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository repoGamePlayer;
 
+    @Autowired
+    private PlayerRepository repoPlayer;
+
     @RequestMapping("/Games")
-    public List<Map<String, Object>> getGame() {
-        return repo.findAll().stream().map(Game -> makeGameDTO(Game)).collect(toList());
+    public Map<String, Object> makeGamesDTO() {
+        Map<String, Object> gamesdto = new LinkedHashMap<String, Object>();
+        List<Game> games = repo.findAll();
+        List<Player> players = repoPlayer.findAll();
+        gamesdto.put("games", games.stream().map(game -> makeGameDTO2(game)).collect(toList()));
+        gamesdto.put("leaderboard",players.stream().map(player -> scoreMap(player)).collect(toList()) );
+
+//        Set<Player> players = game
+//        Set<Score> scores = games.getScore();
+//        gamesdto.put("id", games.getId());
+//        gamesdto.put("scores", game.stream().map(score -> makeScoreDTO(score)).collect(toList()));
+        return gamesdto;
     }
 
     private Map<String, Object> makeGameDTO(Game game){
@@ -35,14 +48,64 @@ public class SalvoController {
         Set<GamePlayer> gps = game.getGamePlayer();
         dto.put("id", game.getId());
         dto.put("date", game.getDate());
+
         dto.put("gamePlayer", gps.stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(toList()));
         return dto;
+    }
+
+    private Map<String, Object> makeGameDTO2(Game game){
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        List<Player> gps = game.getPlayers();
+        Set<GamePlayer> gameplayer = game.getGamePlayer();
+        dto.put("gamePlayer", gameplayer.stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(toList()));
+        dto.put("id", game.getId());
+        dto.put("date", game.getDate());
+//        dto.put("players",gps.stream().map(player -> scoreMap(player)).collect(toList()) );
+
+        return dto;
+    }
+
+    private Map<String, Object> scoreMap (Player p){
+        Map<String, Object> mapScore = new LinkedHashMap<>();
+        mapScore.put("name",p.getUserName());
+        if(p.getScores().size() != 0) {
+            Set<Score> scores = p.getScores();
+            List<Object> winlist = scores.stream().filter(score -> score.getScoreNumber() == 1.0).collect(toList());
+            List<Object> lostlist = scores.stream().filter(score -> score.getScoreNumber() == 0.0).collect(toList());
+            List<Object> tielist = scores.stream().filter(score -> score.getScoreNumber() == 0.5).collect(toList());
+            List<Double> totalList = scores.stream().map(score -> score.getScoreNumber()).collect(toList());
+
+            mapScore.put("win", winlist.size());
+            mapScore.put("lost", lostlist.size());
+            mapScore.put("tie", tielist.size());
+            mapScore.put("total", totalList.stream().reduce((a, b) -> a + b).get());
+        }else {
+            mapScore.put("SCORE",null);
+        }
+
+        return mapScore;
     }
 
     private Map<String, Object> makePlayerDTO(Player player){
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", player.getId());
         dto.put("userName", player.getUserName());
+        return dto;
+    }
+
+    private Map<String, Object> makePlayerDTO2(Player player){
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        dto.put("id", player.getId());
+        dto.put("userName", player.getUserName());
+        dto.put("scoreNumber", player.getScores());
+        return dto;
+    }
+    private Map<String, Object> makeScoreDTO(Score score){
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("id", score.getId());
+
+        dto.put("game", score.getGame());
+        dto.put("score", score.getScoreNumber());
         return dto;
     }
 
@@ -59,6 +122,8 @@ public class SalvoController {
         GamePlayer op = gps.stream().filter(gp -> gp.getId() != gameplayer.getId()).collect(toList()).get(0);
         return op;
     }
+
+
 
 
     @RequestMapping("/game_view/{id}")
