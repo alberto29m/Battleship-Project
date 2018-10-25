@@ -26,11 +26,16 @@ public class Player {
 
     private String userName;
 
+    private String password;
+
     public Player(){ }
 
 
 
-    public Player(String email){userName = email;}
+    public Player(String email, String password){
+        userName = email;
+        this.password = password;
+    }
 
 
     public String getUserName() {
@@ -77,6 +82,19 @@ public class Player {
     public void setGamePlayer(Set<salvoproject.battleship.GamePlayer> gamePlayer) {
         gamePlayers = gamePlayer;
     }
+
+    public Set<Score> getScore() {
+        return score;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @JsonIgnore
     public List<Game> getGames () {
         return gamePlayers.stream().map(gamePlayer -> gamePlayer.getGame()).collect(toList());

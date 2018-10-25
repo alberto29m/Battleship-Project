@@ -3,9 +3,9 @@ package salvoproject.battleship;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -28,7 +28,7 @@ public class SalvoController {
     @Autowired
     private PlayerRepository repoPlayer;
 
-    @RequestMapping("/Games")
+    @RequestMapping("/games")
     public Map<String, Object> makeGamesDTO() {
         Map<String, Object> gamesdto = new LinkedHashMap<String, Object>();
         List<Game> games = repo.findAll();
@@ -80,7 +80,7 @@ public class SalvoController {
             mapScore.put("tie", tielist.size());
             mapScore.put("total", totalList.stream().reduce((a, b) -> a + b).get());
         }else {
-            mapScore.put("SCORE",null);
+            mapScore.put("total",null);
         }
 
         return mapScore;
@@ -160,4 +160,21 @@ public class SalvoController {
         return dto;
     }
 
+//
+//    @RequestMapping(path = "/persons", method = RequestMethod.POST)
+//    public ResponseEntity<Object> register(
+//            @RequestParam first, @RequestParam last,
+//            @RequestParam String email, @RequestParam String password) {
+//
+//        if (firstName.isEmpty() || last.isEmpty() || email.isEmpty() || password.isEmpty()) {
+//            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+//        }
+//
+//        if (personRepository.findOneByEmail(email) !=  null) {
+//            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+//        }
+//
+//        playerRepository.save(new Person(first, last, email, passwordEncoder.encode(password)));
+//        return new ResponseEntity<>(HttpStatus.CREATED);
+//    }
 }

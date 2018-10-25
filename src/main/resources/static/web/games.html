@@ -1,23 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Salvo!</title>
-</head>
-<body>
-    <ol id = "games">
-    </ol>
-    <table id = "scores">
-        <thead>
-            <tr>
-                <td>Name</td>
-                <td>Total</td>
-                <td>Won</td>
-                <td>Lost</td>
-                <td>Tied</td>
-            </tr>
-        </thead>
-    </table>
-    <script src = "games.js"> </script>
-</body>
-</html>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>Salvo!</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        </head>
+        <body>
+            <div class="container">
+                <ol id = "games">
+                </ol>
+                <table id = "scores" class = "table table-striped">
+                    <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Win</th>
+                                <th>Lost</th>
+                                <th>Tied</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+                    </table>
+            </div>
+            <script src = "games.js"> </script>
+        </body>
+        </html>
