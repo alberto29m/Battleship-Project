@@ -1,6 +1,8 @@
 
-fetch('/api/games')
-    .then(function(response) {
+fetch('/api/games',{
+    method:"GET",
+    credentials: "include"
+}).then(function(response) {
         return response.json();
     })
     .then(function(json) {
@@ -10,7 +12,7 @@ fetch('/api/games')
         createTableLeaderboard(data);
     })
     .catch(function(error) {
-        log('Request failed', error)
+        console.log('Request failed', error)
     });
 
 function createList(data){

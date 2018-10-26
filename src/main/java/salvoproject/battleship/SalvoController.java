@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.LinkedHashMap;
@@ -29,13 +31,15 @@ public class SalvoController {
     private PlayerRepository repoPlayer;
 
     @RequestMapping("/games")
-    public Map<String, Object> makeGamesDTO() {
+    public Map<String, Object> makeGamesDTO(Authentication auth) {
         Map<String, Object> gamesdto = new LinkedHashMap<String, Object>();
         List<Game> games = repo.findAll();
         List<Player> players = repoPlayer.findAll();
         gamesdto.put("games", games.stream().map(game -> makeGameDTO2(game)).collect(toList()));
         gamesdto.put("leaderboard",players.stream().map(player -> scoreMap(player)).collect(toList()) );
-
+        if(auth != null) {
+            gamesdto.put("currentUser", makePlayerDTO(getCurrentPlayer(auth)));
+        }
 //        Set<Player> players = game
 //        Set<Score> scores = games.getScore();
 //        gamesdto.put("id", games.getId());
@@ -160,21 +164,29 @@ public class SalvoController {
         return dto;
     }
 
-//
-//    @RequestMapping(path = "/persons", method = RequestMethod.POST)
-//    public ResponseEntity<Object> register(
-//            @RequestParam first, @RequestParam last,
-//            @RequestParam String email, @RequestParam String password) {
-//
-//        if (firstName.isEmpty() || last.isEmpty() || email.isEmpty() || password.isEmpty()) {
-//            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
-//        }
-//
-//        if (personRepository.findOneByEmail(email) !=  null) {
-//            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
-//        }
-//
-//        playerRepository.save(new Person(first, last, email, passwordEncoder.encode(password)));
-//        return new ResponseEntity<>(HttpStatus.CREATED);
-//    }
+
+    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    public ResponseEntity<Object> register(
+            @RequestParam String userName, @RequestParam String password) {
+
+        if ( userName.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+        }
+
+        if (repoPlayer.findByUserName(userName) !=  null) {
+            return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
+        }
+
+        repoPlayer.save(new Player( userName, password));
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    private Player getCurrentPlayer(Authentication authentication) {
+        return repoPlayer.findByUserName(authentication.getName());
+    }
+
+    private boolean isGuest(Authentication authentication) {
+
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
 }
