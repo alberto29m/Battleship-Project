@@ -62,3 +62,71 @@ function createList(data){
                 }
         }
         }
+
+function Signup(){
+
+}
+
+
+function getLogin(){
+    var username = document.getElementById("userName").value;
+    var password = document.getElementById("pass").value;
+    console.log(password);
+    console.log(username);
+    fetch("/api/login", {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST',
+        body: 'username='+ username + '&password='+ password,
+        })
+        .then(function (data) {
+            console.log('Request success: ', data);
+        })
+        .catch(function (error) {
+            console.log('Request failure: ', error);
+        });
+}
+
+function getLogout(){
+    fetch("/api/logout", {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST',
+    })
+        .then(function (data) {
+            console.log('Request success: ', data);
+        })
+        .catch(function (error) {
+            console.log('Request failure: ', error);
+        });
+}
+
+function signUp(){
+    var username = document.getElementById("userName").value;
+    var password = document.getElementById("pass").value;
+    fetch("/api/players", {
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST',
+        body: 'userName='+ username + '&password='+ password,
+    })
+        .then(function (data) {
+            console.log('Request success: ', data);
+
+
+        }).then(function () {
+            getLogin();
+    })
+        .catch(function (error) {
+            console.log('Request failure: ', error);
+        });
+}
+
+
+
