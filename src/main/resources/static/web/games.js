@@ -20,10 +20,16 @@ function createList(data){
     for(var i=0; i < data.games.length; i++){
         var li = document.createElement("li");
         ol.appendChild(li);
+        var a = document.createElement("a");
+        li.appendChild(a);
         if(data.games[i].gamePlayer[1] != null){
-            li.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + data.games[i].gamePlayer[1].Player.userName;
+            for(var j =0; j < data.games[i].gamePlayer.length; j++){
+                var idGamePlayer = data.games[i].gamePlayer[j].id;
+            }
+            a.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + data.games[i].gamePlayer[1].Player.userName;
+            a.setAttribute("href", "game.html?gp=" + idGamePlayer)
         }else{
-            li.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + "There is no brave opponent";
+            a.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + "There is no brave opponent";
         }
     }
 
@@ -62,10 +68,6 @@ function createList(data){
                 }
         }
         }
-
-function Signup(){
-
-}
 
 
 function getLogin(){
@@ -127,6 +129,7 @@ function signUp(){
             console.log('Request failure: ', error);
         });
 }
+
 
 
 

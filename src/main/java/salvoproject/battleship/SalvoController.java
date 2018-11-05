@@ -1,6 +1,7 @@
 package salvoproject.battleship;
 
 
+import com.sun.javafx.collections.MappingChange;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.http.HttpStatus;
@@ -8,11 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import sun.applet.resources.MsgAppletViewer;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -30,7 +29,22 @@ public class SalvoController {
     @Autowired
     private PlayerRepository repoPlayer;
 
-    @RequestMapping("/games")
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> createGame(Authentication auth){
+        if(getCurrentPlayer(auth)== null){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "You must be logged") , HttpStatus.UNAUTHORIZED);
+        }else{
+            Game newGame = new Game();
+            repo.save(newGame);
+            GamePlayer newGamePlayer = new GamePlayer(newGame, getCurrentPlayer(auth));
+            repoGamePlayer.save(newGamePlayer);
+            return new ResponseEntity<Map<String, Object>>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
+        }
+    }
+
+
+
+    @RequestMapping(path = "/games", method= RequestMethod.GET)
     public Map<String, Object> makeGamesDTO(Authentication auth) {
         Map<String, Object> gamesdto = new LinkedHashMap<String, Object>();
         List<Game> games = repo.findAll();
@@ -131,7 +145,7 @@ public class SalvoController {
 
 
     @RequestMapping("/game_view/{id}")
-    public Map<String, Object> makeGameView(@PathVariable Long id) {
+    public  ResponseEntity<Map<String, Object>> makeGameView(@PathVariable Long id, Authentication auth) {
         Map<String,Object> makeGameViewDTO = new LinkedHashMap<>();
         GamePlayer gamePlayer = repoGamePlayer.findOne(id);
         Set<Ship> ships = gamePlayer.getShips();
@@ -140,7 +154,17 @@ public class SalvoController {
         makeGameViewDTO.put("game", makeGameDTO(gamePlayer.getGame()));
         makeGameViewDTO.put("ships", ships.stream().map(ship -> makeShipsDTO(ship)).collect(toList()) );
         makeGameViewDTO.put("salvoes", gamePlayers.stream().map(gamePlayer1 -> makeSalvoesDTO(gamePlayer1.getSalvo())).collect(toList()));
-        return makeGameViewDTO;
+        if(gamePlayer.getId() != getCurrentPlayer(auth).getId()){
+            return new ResponseEntity<>(makeMap("Don't cheat", gamePlayer.getId()) , HttpStatus.UNAUTHORIZED);
+        }else {
+            return new ResponseEntity<> (makeGameViewDTO, HttpStatus.OK );
+        }
+    }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 
     private Map<String, Object> makeShipsDTO(Ship ship){
