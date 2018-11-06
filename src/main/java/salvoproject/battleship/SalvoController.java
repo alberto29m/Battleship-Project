@@ -29,9 +29,26 @@ public class SalvoController {
     @Autowired
     private PlayerRepository repoPlayer;
 
+
+    @RequestMapping(path = "game/{id}/players", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> joinGame(@PathVariable Long id, Authentication auth){
+        if(auth== null){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "You must be logged") , HttpStatus.UNAUTHORIZED);
+        }
+        Game game = repo.findOne(id);
+        if(game.getId() == null){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "No such game"), HttpStatus.FORBIDDEN);
+        }
+        if(game.getPlayers().size()== 2){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "This game is full"), HttpStatus.FORBIDDEN);
+        }
+        GamePlayer newGamePlayer = new GamePlayer(game, getCurrentPlayer(auth));
+        return new ResponseEntity<Map<String, Object>>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
+    }
+
     @RequestMapping(path = "/games", method = RequestMethod.POST)
     public ResponseEntity<Map<String,Object>> createGame(Authentication auth){
-        if(getCurrentPlayer(auth)== null){
+        if(auth== null){
             return new ResponseEntity<Map<String, Object>>(makeMap("Error", "You must be logged") , HttpStatus.UNAUTHORIZED);
         }else{
             Game newGame = new Game();
@@ -54,10 +71,6 @@ public class SalvoController {
         if(auth != null) {
             gamesdto.put("currentUser", makePlayerDTO(getCurrentPlayer(auth)));
         }
-//        Set<Player> players = game
-//        Set<Score> scores = games.getScore();
-//        gamesdto.put("id", games.getId());
-//        gamesdto.put("scores", game.stream().map(score -> makeScoreDTO(score)).collect(toList()));
         return gamesdto;
     }
 
@@ -143,23 +156,32 @@ public class SalvoController {
 
 
 
-
     @RequestMapping("/game_view/{id}")
     public  ResponseEntity<Map<String, Object>> makeGameView(@PathVariable Long id, Authentication auth) {
         Map<String,Object> makeGameViewDTO = new LinkedHashMap<>();
-        GamePlayer gamePlayer = repoGamePlayer.findOne(id);
-        Set<Ship> ships = gamePlayer.getShips();
-        Set<Salvo> salvos = gamePlayer.getSalvo();
-        Set<GamePlayer>gamePlayers = gamePlayer.getGame().getGamePlayers();
-        makeGameViewDTO.put("game", makeGameDTO(gamePlayer.getGame()));
-        makeGameViewDTO.put("ships", ships.stream().map(ship -> makeShipsDTO(ship)).collect(toList()) );
-        makeGameViewDTO.put("salvoes", gamePlayers.stream().map(gamePlayer1 -> makeSalvoesDTO(gamePlayer1.getSalvo())).collect(toList()));
-        if(gamePlayer.getId() != getCurrentPlayer(auth).getId()){
-            return new ResponseEntity<>(makeMap("Don't cheat", gamePlayer.getId()) , HttpStatus.UNAUTHORIZED);
-        }else {
-            return new ResponseEntity<> (makeGameViewDTO, HttpStatus.OK );
+        if(auth != null){
+            GamePlayer gamePlayer = repoGamePlayer.findOne(id);
+            Set<Ship> ships = gamePlayer.getShips();
+            Set<Salvo> salvos = gamePlayer.getSalvo();
+            Set<GamePlayer>gamePlayers = gamePlayer.getGame().getGamePlayers();
+            makeGameViewDTO.put("game", makeGameDTO(gamePlayer.getGame()));
+            if(gamePlayer.getShips().size() != 0){
+                makeGameViewDTO.put("ships", ships.stream().map(ship -> makeShipsDTO(ship)).collect(toList()));
+            }
+            if(gamePlayer.getSalvo().size() != 0){
+                makeGameViewDTO.put("salvoes", gamePlayers.stream().map(gamePlayer1 -> makeSalvoesDTO(gamePlayer1.getSalvo())).collect(toList()));
+            }
+            if(gamePlayer.getPlayer().getId() != getCurrentPlayer(auth).getId()){
+                return new ResponseEntity<>(makeMap("Don't cheat", gamePlayer.getId()) , HttpStatus.UNAUTHORIZED);
+            }else {
+                return new ResponseEntity<> (makeGameViewDTO, HttpStatus.OK );
+            }
+        }
+        else{
+            return new ResponseEntity<Map<String, Object>> (makeMap("Error", "You can´t  do it"), HttpStatus.OK );
         }
     }
+
 
     private Map<String, Object> makeMap(String key, Object value) {
         Map<String, Object> map = new HashMap<>();

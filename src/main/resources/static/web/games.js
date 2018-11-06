@@ -24,10 +24,13 @@ function createList(data){
         li.appendChild(a);
         if(data.games[i].gamePlayer[1] != null){
             for(var j =0; j < data.games[i].gamePlayer.length; j++){
-                var idGamePlayer = data.games[i].gamePlayer[j].id;
+                if((data.currentUser)&&(data.games[i].gamePlayer[j].Player.id == data.currentUser.id)){
+                    var idPlayer = data.currentUser.id;
+                    a.setAttribute("href", "game.html?gp=" + idPlayer)
+
+                }
             }
             a.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + data.games[i].gamePlayer[1].Player.userName;
-            a.setAttribute("href", "game.html?gp=" + idGamePlayer)
         }else{
             a.textContent = data.games[i].gamePlayer[0].Player.userName + " VS " + "There is no brave opponent";
         }
@@ -127,6 +130,29 @@ function signUp(){
     })
         .catch(function (error) {
             console.log('Request failure: ', error);
+        });
+}
+
+function createGame(){
+    fetch("/api/games", {
+        credentials: 'include',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST',
+    })
+        .then(function (response) {
+            return response.json();
+
+    }).then(function (json) {
+        console.log(json.gpid);
+        var gpID=json.gpid;
+        window.location='game.html?gp='+ gpID;
+    })
+        .catch(function (error) {
+            console.log('Request failure: ', error);
+            window.alert("You must be logged!")
         });
 }
 
