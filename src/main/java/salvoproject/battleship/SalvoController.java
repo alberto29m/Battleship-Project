@@ -43,6 +43,7 @@ public class SalvoController {
             return new ResponseEntity<Map<String, Object>>(makeMap("Error", "This game is full"), HttpStatus.FORBIDDEN);
         }
         GamePlayer newGamePlayer = new GamePlayer(game, getCurrentPlayer(auth));
+        repoGamePlayer.save(newGamePlayer);
         return new ResponseEntity<Map<String, Object>>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
     }
 
@@ -91,7 +92,6 @@ public class SalvoController {
         dto.put("gamePlayer", gameplayer.stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(toList()));
         dto.put("id", game.getId());
         dto.put("date", game.getDate());
-//        dto.put("players",gps.stream().map(player -> scoreMap(player)).collect(toList()) );
 
         return dto;
     }
