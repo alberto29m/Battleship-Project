@@ -29,6 +29,26 @@ public class SalvoController {
     @Autowired
     private PlayerRepository repoPlayer;
 
+    @Autowired
+    private ShipRepository repoShips;
+
+
+    @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
+    public ResponseEntity<Map<String,Object>> implementShips(@PathVariable Long gamePlayerId, @RequestBody List<Ship> ships, Authentication auth){
+        GamePlayer gp = repoGamePlayer.findOne(gamePlayerId);
+//        return new ResponseEntity<Map<String, Object>>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
+        if((auth == null)||(gp.getId() == null )||(getCurrentPlayer(auth).getId()!= gp.getPlayer().getId())){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "You can't do it") , HttpStatus.UNAUTHORIZED);
+        }else if(ships != null){
+            return new ResponseEntity<Map<String, Object>>(makeMap("Error", "Ships already placed"), HttpStatus.FORBIDDEN);
+        }else{
+            repoShips.save(ships);
+            return new ResponseEntity<Map<String, Object>>(makeMap("gpid", gp.getId()), HttpStatus.CREATED);
+
+        }
+    }
+
+
 
     @RequestMapping(path = "game/{id}/players", method = RequestMethod.POST)
     public ResponseEntity<Map<String,Object>> joinGame(@PathVariable Long id, Authentication auth){
