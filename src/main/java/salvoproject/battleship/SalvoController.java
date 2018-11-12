@@ -36,15 +36,17 @@ public class SalvoController {
     @RequestMapping(path = "/games/players/{gamePlayerId}/ships", method = RequestMethod.POST)
     public ResponseEntity<Map<String,Object>> implementShips(@PathVariable Long gamePlayerId, @RequestBody List<Ship> ships, Authentication auth){
         GamePlayer gp = repoGamePlayer.findOne(gamePlayerId);
-//        return new ResponseEntity<Map<String, Object>>(makeMap("gpid", newGamePlayer.getId()), HttpStatus.CREATED);
         if((auth == null)||(gp.getId() == null )||(getCurrentPlayer(auth).getId()!= gp.getPlayer().getId())){
             return new ResponseEntity<Map<String, Object>>(makeMap("Error", "You can't do it") , HttpStatus.UNAUTHORIZED);
-        }else if(ships != null){
+        }else if(gp.getShips().size() != 0){
             return new ResponseEntity<Map<String, Object>>(makeMap("Error", "Ships already placed"), HttpStatus.FORBIDDEN);
         }else{
-            repoShips.save(ships);
+            for (int i = 0; i < ships.size(); ++i){
+                ships.get(i).setGamePlayer(gp);
+                repoShips.save(ships.get(i));
+//                gp.addShips(ships.get(i));
+            }
             return new ResponseEntity<Map<String, Object>>(makeMap("gpid", gp.getId()), HttpStatus.CREATED);
-
         }
     }
 

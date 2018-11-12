@@ -150,6 +150,7 @@ function getLogin(){
         })
         .then(function (data) {
             console.log('Request success: ', data);
+            location.reload();
         })
         .catch(function (error) {
             console.log('Request failure: ', error);
@@ -214,6 +215,8 @@ function createGame(){
     })
         .catch(function (error) {
             console.log('Request failure: ', error);
+            // var modalLogin = document.getElementById("myModal");
+            // modalLogin.style.display= "block";
             window.alert("You must be logged!")
         });
 }
