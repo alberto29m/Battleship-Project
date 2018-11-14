@@ -43,3 +43,64 @@ border: 1px solid black;
 #games{
     color: white;
 }
+.container{
+    display:flex;
+    justify-content: center;
+}
+#board{
+    margin-bottom: 200px;
+    margin-right: 40px;
+    color:white;
+}
+#board2{
+    color:white;
+}
+
+.ships{
+    background-color: blue;
+}
+.salvoShip{
+    background-color: red;
+}
+.salvoWater{
+    background-color: aqua;
+}
+
+body{
+    background-color: red;
+}
+#size5{
+    background-color: aqua;
+    height:50px;
+    width:250px;
+    margin:2%;
+    border: 2px solid black;
+}
+#size4{
+    background-color: aqua;
+    height:50px;
+    width:200px;
+    margin:2%;
+    border: 2px solid black;
+}
+#size3a{
+    background-color: aqua;
+    height:50px;
+    width:150px;
+    margin:2%;
+    border: 2px solid black;
+}
+#size3b{
+    background-color: aqua;
+    height:50px;
+    width:150px;
+    margin:2%;
+    border: 2px solid black;
+}
+#size2{
+    background-color: aqua;
+    height:50px;
+    width:100px;
+    margin:2%;
+    border: 2px solid black;
+}

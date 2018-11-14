@@ -29,3 +29,28 @@
 body{
     background-color: red;
 }
+#size5{
+    background-color: aqua;
+    width:250px;
+    hight:50px;
+}
+#size4{
+    background-color: aqua;
+    width:200px;
+    hight:50px;
+}
+#size3a{
+    background-color: aqua;
+    width:150px;
+    hight:50px;
+}
+#size3b{
+    background-color: aqua;
+    width:150px;
+    hight:50px;
+}
+#size2{
+    background-color: aqua;
+    width:100px;
+    hight:50px;
+}

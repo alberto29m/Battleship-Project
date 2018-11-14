@@ -44,7 +44,6 @@ public class SalvoController {
             for (int i = 0; i < ships.size(); ++i){
                 ships.get(i).setGamePlayer(gp);
                 repoShips.save(ships.get(i));
-//                gp.addShips(ships.get(i));
             }
             return new ResponseEntity<Map<String, Object>>(makeMap("gpid", gp.getId()), HttpStatus.CREATED);
         }

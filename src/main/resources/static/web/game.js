@@ -110,6 +110,7 @@ function buildShips(ship){
     function createShips(){
         fetch("/api/games/players/" + gpID +"/ships", {
             credentials: 'include',
+
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
